@@ -1,0 +1,1 @@
+Raw data files for “Introspection Plays and Early Role in Children’s Theory of Mind Development” in Child Development (2018) are not publicly available due to IRB privacy restrictions. See output files and figures solutions to the code files. 
