@@ -73,8 +73,36 @@ by age_group: bitest ok = .25
 ********************************************************************************
 *     (3) Transform Data to Long Format and conduct MLM Table 2    *
 ********************************************************************************
+*filter data set to task variables to transform into long format
 
+keep id sp op sk ok
+
+*rename variables for transformation (to be recoded after)
+rename sp score1
+rename op score2
+rename sk score3
+rename ok score4
+
+*reshape dataset into long format (4 rows per participant)
+reshape long score, i(id) j(task)
+
+*recode indexed task variable to recreate task task factors
+recode task (1 3 = 0) (2 4 = 1), gen(person)
+recode task (1 2 = 0) (3 4 = 1), gen(ms)
+
+*merge back participant level variables as level-2 variables
+merge 1:m id using "cd_2018_demodata.dta", keep(gender age_months source tasks)
+
+saveas "cd_2018_fulldata_long", replace
+
+*run logistic MLM with random effect of participant with interaction term
+melogit score ms##person gender agecent source tasks || id:
 
 ********************************************************************************
 *     (4) Examine Patterns of Error Data on Tasks - Table 3                    *
 ********************************************************************************
+
+*Frequencies of response patterns in Other Tasks by performance on Self Tasks
+tab op_patttern sp
+
+tab ok_pattern sk
